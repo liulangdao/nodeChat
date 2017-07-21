@@ -2,8 +2,9 @@ var net = require('net');
 var chatServer = net.createServer();
 chatServer.on('connection',function(client) {
   client.write('Hi!\n');
-  client.write('Bye!\n');
-  client.end()
+  client.on('data',function(data) {
+    console.log(data);
+  })
 })
 
 chatServer.listen(21568);

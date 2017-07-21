@@ -2,16 +2,22 @@ var net = require('net');
 var chatServer = net.createServer();
 clientList = [];
 chatServer.on('connection',function(client) {
-  client.write('Hi!\n');
+  client.name = client.remoteAddress + ':' + client.remotePort;
+  client.write('Hi ' + client.name + '\n!');
 
   clientList.push(client);
 
   client.on('data',function(data) {
-    for(let i=0; i<clientList.length; i+=1){
-      //把数据发送给所以客户端
-      clientList[i].write(data);
-    }
+    broadcast(data,client);
   })
 })
+
+function broadcast(message,client) {
+  for(let i=0; i<clientList.length; i+=1){
+    if(client !== clientList[i]) {
+      clientList[i].write(client.name + " says ") + message;
+    }
+  }
+}
 
 chatServer.listen(21568);
